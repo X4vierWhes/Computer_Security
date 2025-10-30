@@ -11,7 +11,7 @@ public class MiniDnsServer {
 
     private static final int SERVER_A_PORT = 6000;
     private static final int SERVER_B_PORT = 6010;
-    private static final int SERVER_B_REGISTRY_PORT = 100;
+
     public static void main(String[] args){
         System.setProperty("java.security.policy", "java.policy");
 
