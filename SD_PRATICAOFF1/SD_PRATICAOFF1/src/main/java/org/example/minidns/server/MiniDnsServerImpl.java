@@ -1,18 +1,25 @@
 package org.example.minidns.server;
 
+import org.example.minidns.security.AES;
+import org.example.minidns.security.HMAC;
 import org.example.minidns.utils.Client;
 
 import java.rmi.RemoteException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class MiniDnsServerImpl implements MiniDnsServerInterface{
 
-    Map<String, String> serverMap;
+    private final Map<String, String> serverMap;
+    private AES aes;
+    private HMAC hmac;
 
-    public MiniDnsServerImpl(){
+    public MiniDnsServerImpl() throws NoSuchAlgorithmException {
         serverMap = new HashMap<>();
+        aes = new AES(192);
+
     }
 
 

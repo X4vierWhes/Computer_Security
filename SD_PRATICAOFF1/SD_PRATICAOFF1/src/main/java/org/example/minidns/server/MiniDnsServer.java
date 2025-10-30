@@ -8,12 +8,9 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.security.NoSuchAlgorithmException;
 
 public class MiniDnsServer {
-
-    private AES aes;
-    private HMAC hmac;
-
     public static void main(String[] args){
         try {
             MiniDnsServerImpl refObjRemoto = new MiniDnsServerImpl();
@@ -23,7 +20,7 @@ public class MiniDnsServer {
             registro.bind("MiniDns", sklt);
 
             System.err.println("MiniDnsServer iniciado!");
-        } catch (RemoteException | AlreadyBoundException e) {
+        } catch (RemoteException | AlreadyBoundException | NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
     }
