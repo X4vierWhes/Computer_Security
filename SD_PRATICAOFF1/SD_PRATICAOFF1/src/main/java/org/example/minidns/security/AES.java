@@ -46,10 +46,8 @@ public class AES {
         byte[] encryptMsgBytes;
         Cipher encryptor;
 
-        String cleanMsg = openMsg.replaceAll("\\s", "-").
+        this.msg = openMsg.replaceAll("\\s", "-").
                 replaceAll(",", "-");
-
-        this.msg = cleanMsg;
 
         encryptor = Cipher.getInstance("AES/CBC/PKCS5Padding");
 

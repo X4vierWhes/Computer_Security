@@ -34,7 +34,7 @@ public class MiniDnsClientHandler {
                 break;
             }else if(!msg.equalsIgnoreCase("/")){
                 String encrypted = aes.encrypt(msg);
-                System.err.println(encrypted);
+                //System.err.println(encrypted);
                 String response = stub.sendMsg( encrypted + "/" + HMAC.hMac(encrypted));
                 if(response != null){
                     String[] encryptedResponse = response.split("/");

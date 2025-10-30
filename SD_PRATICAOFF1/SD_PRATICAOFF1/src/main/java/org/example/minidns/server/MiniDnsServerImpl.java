@@ -62,10 +62,10 @@ public class MiniDnsServerImpl implements MiniDnsServerInterface{
 
     @Override
     public String get(String key) throws RemoteException {
-        System.err.println(serverMap.get(key));
-        return serverMap.get(key);
+        String value = serverMap.get(key);
+        //System.err.println(value);
+        return key + " -> " + value;
     }
-
     @Override
     public boolean delete(Client client) {
         return serverMap.remove(client.getName(), client.getIp());
@@ -112,13 +112,13 @@ public class MiniDnsServerImpl implements MiniDnsServerInterface{
 
         for(String a : commands){
             if(a.equalsIgnoreCase(command[0])){
-                return issueComand(a, decryptMsg);
+                return makeComand(a, decryptMsg);
             }
         }
         return "Error: Comando inexistente";
     }
 
-    private String issueComand(String command, String msg) throws RemoteException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+    private String makeComand(String command, String msg) throws RemoteException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         System.err.println("Entrei na linha 122, MiniDNSServerImpl");
         switch (command){
             case "get":
@@ -130,7 +130,7 @@ public class MiniDnsServerImpl implements MiniDnsServerInterface{
                     List<String> all = getAll();
                     return all.toString();
                 }
-            case "put:":
+            case "put":
                 String[] put = msg.split("-");
                 System.err.println(Arrays.toString(put));
                 put(new Client(put[1], put[2]));
