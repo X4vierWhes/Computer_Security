@@ -11,6 +11,7 @@ import java.rmi.RemoteException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -107,7 +108,7 @@ public class MiniDnsServerImpl implements MiniDnsServerInterface{
 
     private String checkCommand(String decryptMsg) throws RemoteException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         String[] command = decryptMsg.split("-");
-        System.err.println(command[0]);
+        //System.err.println(command[0]);
 
         for(String a : commands){
             if(a.equalsIgnoreCase(command[0])){
@@ -118,9 +119,11 @@ public class MiniDnsServerImpl implements MiniDnsServerInterface{
     }
 
     private String issueComand(String command, String msg) throws RemoteException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
-
+        System.err.println("Entrei na linha 122, MiniDNSServerImpl");
         switch (command){
-            case "get": String[] get = msg.split("-");
+            case "get":
+                String[] get = msg.split("-");
+                get[1] = get[1].toLowerCase();
                 if(!get[1].equalsIgnoreCase("all")) {
                     return get(get[1]);
                 }else{
@@ -128,7 +131,10 @@ public class MiniDnsServerImpl implements MiniDnsServerInterface{
                     return all.toString();
                 }
             case "put:":
-                break;
+                String[] put = msg.split("-");
+                System.err.println(Arrays.toString(put));
+                put(new Client(put[1], put[2]));
+                return "Put: " + put[1] + ", " + put[2];
             case "update":
                 break;
             case "delete":

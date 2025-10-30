@@ -46,7 +46,8 @@ public class AES {
         byte[] encryptMsgBytes;
         Cipher encryptor;
 
-        String cleanMsg = openMsg.replaceAll("\\s", "-");
+        String cleanMsg = openMsg.replaceAll("\\s", "-").
+                replaceAll(",", "-");
 
         this.msg = cleanMsg;
 
