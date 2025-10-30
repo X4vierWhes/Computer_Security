@@ -12,6 +12,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class MiniDnsServer {
     public static void main(String[] args){
+        System.setProperty("java.security.policy", "java.policy");
         try {
             MiniDnsServerImpl refObjRemoto = new MiniDnsServerImpl();
             MiniDnsServerInterface sklt = (MiniDnsServerInterface) UnicastRemoteObject.exportObject(refObjRemoto, 6000);

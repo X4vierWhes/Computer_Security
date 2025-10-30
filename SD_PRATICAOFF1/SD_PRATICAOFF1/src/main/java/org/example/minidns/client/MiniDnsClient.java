@@ -11,6 +11,8 @@ public class MiniDnsClient {
     protected static GatewayInterface gatewayInterface;
 
     public static void main(String[] args) throws RemoteException, NotBoundException {
+        System.setProperty("java.security.policy", "java.policy");
+
         Registry registry = LocateRegistry.getRegistry("localhost", Registry.REGISTRY_PORT + 1);
         gatewayInterface = (GatewayInterface) registry.lookup("Gateway");
 

@@ -17,6 +17,7 @@ public class Gateway {
     private HMAC hmac;
 
     public static void main(String[] args){
+        System.setProperty("java.security.policy", "java.policy");
         try {
             GatewayImpl refObjRemoto = new GatewayImpl();
             GatewayInterface sklt = (GatewayInterface) UnicastRemoteObject.exportObject(refObjRemoto, 5000);
