@@ -1,5 +1,6 @@
 package org.example.minidns.server;
 
+import org.example.minidns.client.ClientCallbackInterface;
 import org.example.minidns.security.AES;
 import org.example.minidns.security.HMAC;
 import org.example.minidns.utils.CalculatorEngine;
@@ -12,16 +13,14 @@ import java.rmi.RemoteException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MiniDnsServerImpl implements MiniDnsServerInterface{
 
     private final Map<String, String> serverMap;
     private AES aes;
     String [] commands = {"put", "calc", "get", "delete", "update"};
+    private final List<ClientCallbackInterface> registeredClients;
 
     public MiniDnsServerImpl() throws NoSuchAlgorithmException {
         serverMap = new HashMap<>() {{
@@ -37,6 +36,22 @@ public class MiniDnsServerImpl implements MiniDnsServerInterface{
             put("servidor10", "192.168.0.100");
         }};
 
+        /*
+        serverMap = new HashMap<>() {{
+            put("servidor11", "192.168.0.10");
+            put("servidor12", "192.168.0.20");
+            put("servidor13", "192.168.0.30");
+            put("servidor14", "192.168.0.40");
+            put("servidor15", "192.168.0.50");
+            put("servidor16", "192.168.0.60");
+            put("servidor17", "192.168.0.70");
+            put("servidor18", "192.168.0.80");
+            put("servidor19", "192.168.0.90");
+            put("servidor20", "192.168.0.100");
+        }};
+        */
+
+        registeredClients = new ArrayList<>();
         aes = new AES(192);
 
     }
@@ -88,8 +103,22 @@ public class MiniDnsServerImpl implements MiniDnsServerInterface{
     }
 
     @Override
-    public void notifyClients() {
+    public void notifyClients(String updateMessage) throws RemoteException {
+        List<ClientCallbackInterface> clientsToRemove = new ArrayList<>();
 
+        synchronized (registeredClients) {
+            for (ClientCallbackInterface client : registeredClients) {
+                try {
+                    client.notifyUpdate(updateMessage);
+                } catch (RemoteException e) {
+                    clientsToRemove.add(client);
+                    System.err.println("Cliente desconectado ou falhou na notificação.");
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            registeredClients.removeAll(clientsToRemove);
+        }
     }
 
     @Override
@@ -97,10 +126,22 @@ public class MiniDnsServerImpl implements MiniDnsServerInterface{
         String encryptMsg = aes.encrypt(msg);
         System.out.println("Mensagem de resposta: " + msg);
         try {
+            String updateMsg = encryptMsg + "/" + HMAC.hMac(encryptMsg);
+            notifyClients(updateMsg);
             return encryptMsg + "/" + HMAC.hMac(encryptMsg);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void registerClient(ClientCallbackInterface client) throws RemoteException {
+        registeredClients.add(client);
+    }
+
+    @Override
+    public boolean checkServer(String key) throws RemoteException {
+        return false;
     }
 
     private boolean checkHmac(String [] msg) throws Exception {
@@ -142,7 +183,10 @@ public class MiniDnsServerImpl implements MiniDnsServerInterface{
                 update(update[1], update[2]);
                 return "Update: Name: " + update[1] + " IP: " + update[2];
             case "delete":
-                break;
+                String[] delete = msg.split("-");
+                System.err.println(Arrays.toString(delete));
+                delete(new Client(delete[1], delete[2]));
+                return "Delete: Name: " + delete[1] + " Ip: " + delete[2];
             case "calc": String[] calc = msg.split("-");
                 //System.err.println(Arrays.toString(calc));
                 StringBuilder expression = new StringBuilder();

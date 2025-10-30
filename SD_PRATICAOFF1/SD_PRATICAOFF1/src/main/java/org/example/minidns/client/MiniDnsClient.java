@@ -2,11 +2,9 @@ package org.example.minidns.client;
 
 import org.example.minidns.gateway.GatewayInterface;
 
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.security.NoSuchAlgorithmException;
+
 
 public class MiniDnsClient {
     protected static GatewayInterface gatewayInterface;

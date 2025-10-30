@@ -1,5 +1,6 @@
 package org.example.minidns.server;
 
+import org.example.minidns.client.ClientCallbackInterface;
 import org.example.minidns.utils.Client;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -26,7 +27,11 @@ public interface MiniDnsServerInterface extends Remote {
 
     String sendMsg(String msg) throws Exception;
 
-    void notifyClients() throws RemoteException;
+    void notifyClients(String msg) throws RemoteException;
 
     String respondMsg(String msg) throws RemoteException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException;
+
+    void registerClient(ClientCallbackInterface client) throws RemoteException;
+
+    boolean checkServer(String key) throws RemoteException;
 }
