@@ -63,13 +63,13 @@ public class AES {
 
     private String encoder(byte[] encryptMsgBytes) {
         return Base64
-                .getEncoder()
+                .getUrlEncoder()
                 .encodeToString(encryptMsgBytes);
     }
 
     private byte[] decoder(String encoderMsg){
         return Base64.
-                getDecoder().
+                getUrlDecoder().
                 decode(encoderMsg);
     }
 
