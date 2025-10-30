@@ -2,6 +2,7 @@ package org.example.minidns.security;
 
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -23,7 +24,8 @@ public class AES {
     public void generateKey(int t) throws NoSuchAlgorithmException {
         this.keyGenerator = KeyGenerator.getInstance("AES");
         this.keyGenerator.init(t);
-        this.key = keyGenerator.generateKey();
+        //this.key = keyGenerator.generateKey();
+        this.key = new SecretKeySpec("1234567891234567".getBytes(), "AES");
         //System.out.println(Arrays.toString(key.getEncoded()));
     }
 

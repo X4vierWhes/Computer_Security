@@ -13,8 +13,6 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
 public class Gateway {
-    private AES aes;
-    private HMAC hmac;
 
     public static void main(String[] args){
         System.setProperty("java.security.policy", "java.policy");

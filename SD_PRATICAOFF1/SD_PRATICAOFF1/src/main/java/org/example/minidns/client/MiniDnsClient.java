@@ -6,11 +6,12 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.security.NoSuchAlgorithmException;
 
 public class MiniDnsClient {
     protected static GatewayInterface gatewayInterface;
 
-    public static void main(String[] args) throws RemoteException, NotBoundException {
+    public static void main(String[] args) throws Exception {
         System.setProperty("java.security.policy", "java.policy");
 
         Registry registry = LocateRegistry.getRegistry("localhost", Registry.REGISTRY_PORT + 1);

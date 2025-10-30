@@ -8,8 +8,9 @@ public class HMAC {
     //public static final String ALG = "HmacSHA224";
     //public static final String ALG = "HmacSHA384";
     public static final String ALG = "HmacSHA512";
+    private static final String chave = "whesley";
 
-    public static String hMac(String chave, String mensagem) throws Exception {
+    public static String hMac(String mensagem) throws Exception {
         Mac shaHMAC = Mac.getInstance(ALG);
         SecretKeySpec chaveMAC =
                 new SecretKeySpec(
