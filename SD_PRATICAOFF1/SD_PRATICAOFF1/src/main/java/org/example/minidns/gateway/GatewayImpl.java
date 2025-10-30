@@ -3,16 +3,10 @@ package org.example.minidns.gateway;
 import org.example.minidns.server.MiniDnsServerInterface;
 import org.example.minidns.utils.Client;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 public class GatewayImpl implements GatewayInterface{
@@ -30,8 +24,8 @@ public class GatewayImpl implements GatewayInterface{
     }
 
     @Override
-    public List<String> getAll(String key) throws RemoteException {
-        return miniDnsServerInterface.getAll(key);
+    public List<String> getAll() throws RemoteException {
+        return miniDnsServerInterface.getAll();
     }
 
     @Override
@@ -40,8 +34,8 @@ public class GatewayImpl implements GatewayInterface{
     }
 
     @Override
-    public void sendMsg(String msg) throws RemoteException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
-        miniDnsServerInterface.sendMsg(msg);
+    public String sendMsg(String msg) throws Exception {
+        return miniDnsServerInterface.sendMsg(msg);
     }
 
     @Override

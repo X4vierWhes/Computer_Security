@@ -3,13 +3,6 @@ package org.example.minidns.client;
 import org.example.minidns.gateway.GatewayInterface;
 import org.example.minidns.security.AES;
 import org.example.minidns.security.HMAC;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import java.rmi.RemoteException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
 
@@ -17,7 +10,6 @@ public class MiniDnsClientHandler {
 
     private Scanner cin;
     private AES aes;
-    private HMAC hmac;
 
     public MiniDnsClientHandler() throws NoSuchAlgorithmException {
         cin = new Scanner(System.in);
@@ -25,25 +17,36 @@ public class MiniDnsClientHandler {
     }
 
     public void loop(GatewayInterface stub) throws Exception {
-        System.out.println("""
+        System.out.print("""
                 EXEMPLOS DE COMANDOS:
-                GET
+                GET (Name) or GET (ALL)
                 PUT (Name, ip)
                 DELETE (Name, ip)
                 UPDATE (Name, ip)
-                CALC (EXPRESSION(1+5))
+                CALC (EXPRESSION)
                 EXIT
                 INICIE:
                 """);
         while (true){
-            String msg = cin.next();
+            String msg = cin.nextLine();
 
             if(msg.equalsIgnoreCase("exit")){
                 break;
-            }else {
+            }else if(!msg.equalsIgnoreCase("/")){
                 String encrypted = aes.encrypt(msg);
-                stub.sendMsg( encrypted + "/" + HMAC.hMac(encrypted));
+                System.err.println(encrypted);
+                String response = stub.sendMsg( encrypted + "/" + HMAC.hMac(encrypted));
+                if(response != null){
+                    String[] encryptedResponse = response.split("/");
+                    if(checkHmac(encryptedResponse)){
+                        System.err.println(aes.decrypt(encryptedResponse[0]));
+                    }
+                }
             }
         }
+    }
+
+    private boolean checkHmac(String [] msg) throws Exception {
+        return HMAC.hMac(msg[0]).equals(msg[1]);
     }
 }

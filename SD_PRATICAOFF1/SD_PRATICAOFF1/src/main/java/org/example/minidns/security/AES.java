@@ -25,9 +25,15 @@ public class AES {
         //this.keyGenerator = KeyGenerator.getInstance("AES");
         //this.keyGenerator.init(t);
         //this.key = keyGenerator.generateKey();
-        this.key = new SecretKeySpec("1234567891234567".getBytes(), "AES");
-        this.vi = generateVI();
+        //this.vi = generateVI();
         //System.out.println(Arrays.toString(key.getEncoded()));
+        this.key = new SecretKeySpec("1234567891234567".getBytes(), "AES");
+        this.vi = new IvParameterSpec(new byte[] {
+                (byte)0x1A, (byte)0x2B, (byte)0x3C, (byte)0x4D,
+                (byte)0x5E, (byte)0x6F, (byte)0x70, (byte)0x81,
+                (byte)0x92, (byte)0xA3, (byte)0xB4, (byte)0xC5,
+                (byte)0xD6, (byte)0xE7, (byte)0xF8, (byte)0x09
+        });
     }
 
     public static IvParameterSpec generateVI(){
@@ -40,7 +46,9 @@ public class AES {
         byte[] encryptMsgBytes;
         Cipher encryptor;
 
-        this.msg = openMsg;
+        String cleanMsg = openMsg.replaceAll("\\s", "-");
+
+        this.msg = cleanMsg;
 
         encryptor = Cipher.getInstance("AES/CBC/PKCS5Padding");
 

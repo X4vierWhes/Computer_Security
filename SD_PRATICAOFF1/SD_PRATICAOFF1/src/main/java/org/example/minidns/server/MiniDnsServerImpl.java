@@ -11,7 +11,6 @@ import java.rmi.RemoteException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +19,7 @@ public class MiniDnsServerImpl implements MiniDnsServerInterface{
 
     private final Map<String, String> serverMap;
     private AES aes;
-    private HMAC hmac;
+    String [] commands = {"put", "calc", "get", "delete", "update"};
 
     public MiniDnsServerImpl() throws NoSuchAlgorithmException {
         serverMap = new HashMap<>() {{
@@ -56,8 +55,14 @@ public class MiniDnsServerImpl implements MiniDnsServerInterface{
     }
 
     @Override
-    public List<String> getAll(String key) {
+    public List<String> getAll() {
         return serverMap.entrySet().stream().map( e -> e.getKey() + " -> " + e.getValue()).toList();
+    }
+
+    @Override
+    public String get(String key) throws RemoteException {
+        System.err.println(serverMap.get(key));
+        return serverMap.get(key);
     }
 
     @Override
@@ -66,14 +71,18 @@ public class MiniDnsServerImpl implements MiniDnsServerInterface{
     }
 
     @Override
-    public void sendMsg(String msg) throws InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+    public String sendMsg(String msg) throws Exception {
+        System.err.println("Mensagem encriptada: " + msg);
         String [] newMsg = msg.split("/");
-        System.out.println(Arrays.toString(newMsg));
 
-        for(String a : newMsg){
-            System.out.println(aes.decrypt(a));
+        if(checkHmac(newMsg)){
+            System.out.println("HMAC IGUAL");
+            String decryptMsg = aes.decrypt(newMsg[0]);
+            //System.out.println(decryptMsg);
+            return respondMsg(checkCommand(decryptMsg));
         }
 
+        return respondMsg("Error: Chaves contraditórias");
     }
 
     @Override
@@ -82,7 +91,52 @@ public class MiniDnsServerImpl implements MiniDnsServerInterface{
     }
 
     @Override
-    public void respondMsg(String msg) throws RemoteException {
+    public String respondMsg(String msg) throws RemoteException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+        String encryptMsg = aes.encrypt(msg);
+        System.out.println("Mensagem de resposta: " + msg);
+        try {
+            return encryptMsg + "/" + HMAC.hMac(encryptMsg);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
+    private boolean checkHmac(String [] msg) throws Exception {
+        return HMAC.hMac(msg[0]).equals(msg[1]);
+    }
+
+    private String checkCommand(String decryptMsg) throws RemoteException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+        String[] command = decryptMsg.split("-");
+        System.err.println(command[0]);
+
+        for(String a : commands){
+            if(a.equalsIgnoreCase(command[0])){
+                return issueComand(a, decryptMsg);
+            }
+        }
+        return "Error: Comando inexistente";
+    }
+
+    private String issueComand(String command, String msg) throws RemoteException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+
+        switch (command){
+            case "get": String[] get = msg.split("-");
+                if(!get[1].equalsIgnoreCase("all")) {
+                    return get(get[1]);
+                }else{
+                    List<String> all = getAll();
+                    return all.toString();
+                }
+            case "put:":
+                break;
+            case "update":
+                break;
+            case "delete":
+                break;
+            case "calc":
+                break;
+        }
+
+        return "Error: Não foi possível realizar comando";
     }
 }
