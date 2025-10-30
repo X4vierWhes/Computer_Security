@@ -22,10 +22,11 @@ public class AES {
     }
 
     public void generateKey(int t) throws NoSuchAlgorithmException {
-        this.keyGenerator = KeyGenerator.getInstance("AES");
-        this.keyGenerator.init(t);
+        //this.keyGenerator = KeyGenerator.getInstance("AES");
+        //this.keyGenerator.init(t);
         //this.key = keyGenerator.generateKey();
         this.key = new SecretKeySpec("1234567891234567".getBytes(), "AES");
+        this.vi = generateVI();
         //System.out.println(Arrays.toString(key.getEncoded()));
     }
 
@@ -42,8 +43,6 @@ public class AES {
         this.msg = openMsg;
 
         encryptor = Cipher.getInstance("AES/CBC/PKCS5Padding");
-
-        this.vi = generateVI();
 
         encryptor.init(Cipher.ENCRYPT_MODE, this.key, this.vi);
 
