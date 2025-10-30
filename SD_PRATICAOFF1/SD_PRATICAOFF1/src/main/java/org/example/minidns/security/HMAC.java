@@ -3,11 +3,11 @@ package org.example.minidns.security;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-public class Hmac {
-    public static final String ALG = "HmacSHA256";
+public class HMAC {
+    //public static final String ALG = "HmacSHA256";
     //public static final String ALG = "HmacSHA224";
     //public static final String ALG = "HmacSHA384";
-    //public static final String ALG = "HmacSHA512";
+    public static final String ALG = "HmacSHA512";
 
     public static String hMac(String chave, String mensagem) throws Exception {
         Mac shaHMAC = Mac.getInstance(ALG);

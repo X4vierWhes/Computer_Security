@@ -24,7 +24,7 @@ public class AES {
         this.keyGenerator = KeyGenerator.getInstance("AES");
         this.keyGenerator.init(t);
         this.key = keyGenerator.generateKey();
-        //System.out.println(Arrays.toString(key.getEncoded()));
+        System.out.println(Arrays.toString(key.getEncoded()));
     }
 
     public static IvParameterSpec generateVI(){
