@@ -39,7 +39,7 @@ public class MiniDnsClientHandler {
                 if(response != null){
                     String[] encryptedResponse = response.split("/");
                     if(checkHmac(encryptedResponse)){
-                        System.err.println(aes.decrypt(encryptedResponse[0]));
+                        System.err.println(aes.decrypt(encryptedResponse[0]).replaceAll("-", " "));
                     }
                 }
             }

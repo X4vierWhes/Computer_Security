@@ -2,6 +2,7 @@ package org.example.minidns.server;
 
 import org.example.minidns.security.AES;
 import org.example.minidns.security.HMAC;
+import org.example.minidns.utils.CalculatorEngine;
 import org.example.minidns.utils.Client;
 
 import javax.crypto.BadPaddingException;
@@ -136,11 +137,21 @@ public class MiniDnsServerImpl implements MiniDnsServerInterface{
                 put(new Client(put[1], put[2]));
                 return "Put: " + put[1] + ", " + put[2];
             case "update":
-                break;
+                String[] update = msg.split("-");
+                System.err.println(Arrays.toString(update));
+                update(update[1], update[2]);
+                return "Update: Name: " + update[1] + " IP: " + update[2];
             case "delete":
                 break;
-            case "calc":
-                break;
+            case "calc": String[] calc = msg.split("-");
+                //System.err.println(Arrays.toString(calc));
+                StringBuilder expression = new StringBuilder();
+                for(int i = 1; i < calc.length; i++){
+                    expression.append(calc[i]);
+                }
+                System.err.println(expression);
+                double result = CalculatorEngine.calcExpression(String.valueOf(expression));
+                return "Resultado da expressão (" + expression + ") = " + result;
         }
 
         return "Error: Não foi possível realizar comando";
