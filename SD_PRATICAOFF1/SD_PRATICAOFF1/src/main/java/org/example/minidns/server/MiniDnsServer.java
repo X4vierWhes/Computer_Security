@@ -38,14 +38,11 @@ public class MiniDnsServer {
      */
     private static void initServer(Registry registry, String name, int port){
         try {
-            // 1. Cria uma nova instância da implementação do servidor
             MiniDnsServerImpl refObjRemoto = new MiniDnsServerImpl();
 
-            // 2. Exporta o objeto remoto na porta especificada
             MiniDnsServerInterface sklt = (MiniDnsServerInterface)
                     UnicastRemoteObject.exportObject(refObjRemoto, port);
 
-            // 3. Registra o objeto no Registry sob o nome único
             registry.bind(name, sklt);
 
             System.err.println(name + " iniciado e registrado na porta " + port);
